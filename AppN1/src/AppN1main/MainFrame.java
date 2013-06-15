@@ -51,7 +51,9 @@ public class MainFrame {
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if ((textArea.getText()).equals("begin"))
-					JOptionPane.showMessageDialog(frame, "Message text");
+					JOptionPane.showMessageDialog(frame, "YOU GOOD");
+				else 
+					JOptionPane.showMessageDialog(frame, "Type \"begin\" in text area, then press button");
 			}
 		});
 		panel.add(btnNewButton);
