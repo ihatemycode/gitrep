@@ -71,7 +71,7 @@ public class MainFrame {
 	private JMenuBar initMainMenu() {
 		JMenuBar jMenuBar = new JMenuBar();
 
-		JMenu jFile = new JMenu("File");
+		JMenu jFile = new JMenu("  File  ");
 		JMenuItem jNew = new JMenuItem("New");
 		JMenuItem jOpen = new JMenuItem("Open");
 		JMenuItem jSave = new JMenuItem("Save");
@@ -85,14 +85,26 @@ public class MainFrame {
 		jFile.addSeparator();
 		jFile.add(jExit);
 
-		jFile.setFont(new Font(Font.DIALOG, 1, 16));
-		jNew.setFont(new Font(Font.DIALOG, 1, 14));
-		jOpen.setFont(new Font(Font.DIALOG, 1, 14));
-		jSave.setFont(new Font(Font.DIALOG, 1, 14));
-		jSaveAs.setFont(new Font(Font.DIALOG, 1, 14));
-		jExit.setFont(new Font(Font.DIALOG, 1, 14));
+		jFile.setFont(new Font(Font.DIALOG, 0, 16));
+		jNew.setFont(new Font(Font.DIALOG, 0, 14));
+		jOpen.setFont(new Font(Font.DIALOG, 0, 14));
+		jSave.setFont(new Font(Font.DIALOG, 0, 14));
+		jSaveAs.setFont(new Font(Font.DIALOG, 0, 14));
+		jExit.setFont(new Font(Font.DIALOG, 0, 14));
 
 		jMenuBar.add(jFile);
+		
+		JMenu jHelp = new JMenu("  Help  ");
+		JMenuItem jAbout = new JMenuItem("About");
+		jHelp.add(jAbout);
+		
+		jMenuBar.add(jHelp);
+		
+		jAbout.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(frame, "Super text editor\n     ¹1 in the world");
+			}		
+		});
 
 		jNew.addActionListener(new ActionListener() {
 
