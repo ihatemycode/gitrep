@@ -31,13 +31,14 @@ public class MainFrame {
 
 	private JFrame frame;
 	private JTextArea textArea;
-	
+	private File file = null;
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UIManager.setLookAndFeel(
-							UIManager.getSystemLookAndFeelClassName());
+					UIManager.setLookAndFeel(UIManager
+							.getSystemLookAndFeelClassName());
 					MainFrame window = new MainFrame();
 					window.frame.setVisible(true);
 				} catch (Exception e) {
@@ -55,28 +56,28 @@ public class MainFrame {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
+
 		JPanel panel = new JPanel();
 		frame.setJMenuBar(initMainMenu());
 		frame.getContentPane().add(panel);
-				
+
 		textArea = new JTextArea();
-		textArea.setFont(new Font(Font.MONOSPACED,0, 20));
-		
-		JScrollPane scrollPane = new JScrollPane(textArea);		
+		textArea.setFont(new Font(Font.MONOSPACED, 0, 20));
+
+		JScrollPane scrollPane = new JScrollPane(textArea);
 		frame.getContentPane().add(scrollPane);
 	}
-	
+
 	private JMenuBar initMainMenu() {
 		JMenuBar jMenuBar = new JMenuBar();
-		
+
 		JMenu jFile = new JMenu("File");
 		JMenuItem jNew = new JMenuItem("New");
 		JMenuItem jOpen = new JMenuItem("Open");
 		JMenuItem jSave = new JMenuItem("Save");
 		JMenuItem jSaveAs = new JMenuItem("Save as");
 		JMenuItem jExit = new JMenuItem("Exit");
-		
+
 		jFile.add(jNew);
 		jFile.add(jOpen);
 		jFile.add(jSave);
@@ -92,17 +93,20 @@ public class MainFrame {
 		jExit.setFont(new Font(Font.DIALOG, 1, 14));
 
 		jMenuBar.add(jFile);
-		
-		jNew.addActionListener(new ActionListener() {	
-				
+
+		jNew.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent arg0) {
 				if (textArea.getText().length() != 0) {
-					int result = JOptionPane.showConfirmDialog(frame, "Don't save changes?", "Message", JOptionPane.YES_NO_OPTION);
-					if (result == 0) textArea.setText(""); // YES_OPTION
+					int result = JOptionPane.showConfirmDialog(frame,
+							"Don't save changes?", "Message",
+							JOptionPane.YES_NO_OPTION);
+					if (result == 0)
+						textArea.setText(""); // YES_OPTION
 				}
-			}			
+			}
 		});
-				
+
 		jOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				System.out.println("Open file dialog is activated");
@@ -110,75 +114,85 @@ public class MainFrame {
 				int codeResult = fc.showOpenDialog(frame);
 				System.out.println("Code result - " + codeResult);
 				if (codeResult == fc.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
+					file = fc.getSelectedFile();
 					FileReader inputStream = null;
-					
+
 					try {
 						inputStream = new FileReader(file);
 						BufferedReader inBuff = new BufferedReader(inputStream);
-						String oneLine = null;						
+						String oneLine = null;
 						StringBuilder allText = new StringBuilder();
 						oneLine = inBuff.readLine();
-						while (oneLine != null) {							
+						while (oneLine != null) {
 							allText = allText.append(oneLine);
 							allText = allText.append("\n");
 							System.out.println(oneLine);
 							oneLine = inBuff.readLine();
 						}
 						textArea.setText(allText.toString());
-						
+
 						inputStream.close();
 					} catch (IOException e) {
 						JOptionPane.showMessageDialog(frame, "Can't open file");
 						e.printStackTrace();
-					}
-					finally {
+					} finally {
 						try {
 							inputStream.close();
 						} catch (IOException e) {
-							JOptionPane.showMessageDialog(frame, "Can't close inputStream");
-							e.printStackTrace();
-						}
-					}
-				}
-			}		
-		});
-		
-		jSaveAs.addActionListener(new ActionListener() {			
-			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser fc = new JFileChooser();
-				int codeResult = fc.showSaveDialog(frame);
-				if (codeResult == fc.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					FileWriter outputStream = null;
-					try {
-						outputStream = new FileWriter(file);
-						outputStream.write(textArea.getText());
-						outputStream.close();
-					}
-					catch (IOException e) {
-						JOptionPane.showMessageDialog(frame, "Can't write file");
-						e.printStackTrace();
-					}
-					finally {
-						try {
-							outputStream.close();
-						} catch (IOException e) {
-							JOptionPane.showMessageDialog(frame, "Can't close outputStream");
+							JOptionPane.showMessageDialog(frame,
+									"Can't close inputStream");
 							e.printStackTrace();
 						}
 					}
 				}
 			}
 		});
-		
-		jExit.addActionListener(new ActionListener() {			
+
+		jSaveAs.addActionListener(new SaveActionListener());
+
+		jSave.addActionListener(new SaveActionListener());
+
+		jExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				frame.dispose();
 				System.exit(0);
 			}
 		});
-						
+
 		return jMenuBar;
-	}	
+	}
+
+	class SaveActionListener implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			String sourceName = e.getSource().toString();
+			System.out.println(sourceName);
+			if (sourceName.contains("Save as")) {
+				JFileChooser fc = new JFileChooser();
+				int codeResult = fc.showSaveDialog(frame);
+				if (codeResult == fc.APPROVE_OPTION) {
+					file = fc.getSelectedFile();
+				}
+			}
+
+			if (file != null) {
+				FileWriter outputStream = null;
+				try {
+					outputStream = new FileWriter(file);
+					outputStream.write(textArea.getText());
+					outputStream.close();
+				} catch (IOException e1) {
+					JOptionPane.showMessageDialog(frame, "Can't write to file");
+					e1.printStackTrace();
+				} finally {
+					try {
+						outputStream.close();
+					} catch (IOException e2) {
+						JOptionPane.showMessageDialog(frame,
+								"Can't close outputStream");
+						e2.printStackTrace();
+					}
+				}
+			}
+		}
+	}
 }
