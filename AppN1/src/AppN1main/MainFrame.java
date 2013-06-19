@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class MainFrame {
@@ -149,9 +150,26 @@ public class MainFrame {
 				int codeResult = fc.showSaveDialog(frame);
 				if (codeResult == fc.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
-					
+					FileWriter outputStream = null;
+					try {
+						outputStream = new FileWriter(file);
+						outputStream.write(textArea.getText());
+						outputStream.close();
+					}
+					catch (IOException e) {
+						JOptionPane.showMessageDialog(frame, "Can't write file");
+						e.printStackTrace();
+					}
+					finally {
+						try {
+							outputStream.close();
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(frame, "Can't close outputStream");
+							e.printStackTrace();
+						}
+					}
 				}
-			}			
+			}
 		});
 		
 		jExit.addActionListener(new ActionListener() {			
